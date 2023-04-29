@@ -1,8 +1,13 @@
+import json
+import os
+from concurrent.futures import ThreadPoolExecutor
+
 import pandas as pd
 import requests
 
-ISSUANCE_FILE = "verra_vcus.csv"
-PROJECT_FILE = "verra_projects.csv"
+ISSUANCE_FILE = "data/verra_vcus.csv"
+PROJECT_FILE = "data/verra_projects.csv"
+DETAILS_FILE = "data/verra_details.json"
 
 COOKIES = {
     "ASPSESSIONIDSEBRTARC": "JNIICHMANPKHCBEAAJLDBOMP",
@@ -45,7 +50,7 @@ def download_issuances_csv(outname=ISSUANCE_FILE):
     print("Downloading Verra issuances. This may take a while...")
 
     response = requests.post(
-        f"https://registry.verra.org/uiapi/asset/asset/search?$skip=0&count=true&$format=csv&$exportFileName={outname}",
+        f"https://registry.verra.org/uiapi/asset/asset/search?$skip=0&count=true&$format=csv&$exportFileName={os.path.basename(outname)}",
         cookies=COOKIES,
         headers=HEADERS,
         json=json_data,
@@ -81,7 +86,7 @@ def download_projects_csv(outname=PROJECT_FILE):
     }
 
     response = requests.post(
-        f"https://registry.verra.org/uiapi/resource/resource/search?$skip=0&count=true&$format=csv&$exportFileName={outname}",
+        f"https://registry.verra.org/uiapi/resource/resource/search?$skip=0&count=true&$format=csv&$exportFileName={os.path.basename(outname)}",
         cookies=COOKIES,
         headers=HEADERS,
         json=json_data,
@@ -106,19 +111,21 @@ def get_project(pid):
     return results
 
 
-def get_all_project_details():
+def get_all_project_details(outname=DETAILS_FILE):
     """
-    Scrapes project descriptions using the issuances to get project ids
+    Scrapes all project details
     """
-
-    df = pd.read_csv(PROJECT_FILE)
-    print(df.keys())
 
     # get all the unique project ids
+    df = pd.read_csv(PROJECT_FILE)
     ids = df["ID"].unique().tolist()
-    print(len(ids))
 
-    print(get_project(ids[0]))
+    print(f"Downloading details for {len(ids)} projects")
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        all = executor.map(get_project, ids)
+        with open(outname, "w") as outfile:
+            json.dump(list(all), outfile)
 
 
 def merge_data():
@@ -137,6 +144,15 @@ def merge_data():
     print(total)
 
 
-if __name__ == "__main__":
-    # get_issuances()
+def run():
+    download_projects_csv()
+    download_issuances_csv()
     get_all_project_details()
+    merge_data()
+
+
+if __name__ == "__main__":
+    # download_projects_csv()
+    # download_issuances_csv()
+    get_all_project_details()
+    # merge_data()
