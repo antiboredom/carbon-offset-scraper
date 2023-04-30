@@ -160,25 +160,32 @@ def merge_data():
     basic_details = pd.read_csv(PROJECT_FILE)
 
     for index, row in totals.iterrows():
-        # print(row['ID'], row['Quantity Issued'])
-        pid = str(int(row["ID"]))
+        pid = int(row["ID"])
         details_fname = f"data/verra/projects/{pid}.json"
         try:
             with open(details_fname, "r") as infile:
                 details = json.load(infile)
         except Exception as e:
+            print(f"Missing: {pid}.json")
             continue
 
         # TODO: finish this up!
         description = details.get("description", "")
-        status = details.get("status")
-        print(details)
+
+        details_row = basic_details.loc[basic_details["ID"] == pid]
+
         project = OffsetProject(
-            registry_id=pid,
+            registry_id=str(pid),
             total_credits=row["Quantity Issued"],
             description=description,
+            status=details_row["Status"].values[0],
+            registry_url=f"https://registry.verra.org/app/projectDetail/VCS/{pid}",
+            developer=basic_details["Proponent"].values[0],
+            project_type=basic_details["Project Type"].values[0],
+            methodology=basic_details["Methodology"].values[0],
+            location=basic_details["Country/Area"].values[0],
+            name=basic_details["Name"].values[0]
         )
-        print(project)
 
     # print(totals)
 
