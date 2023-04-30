@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pandas as pd
 import requests
+
 from data import OffsetProject
 
 ISSUANCE_FILE = "data/verra_vcus.csv"
@@ -143,6 +144,7 @@ def merge_data():
     Normalizes and merges data from all sources
     """
 
+    # load all issuances
     df = pd.read_csv(ISSUANCE_FILE)
 
     # summing "Quantity Issued" reflects the total, NOT "Total Vintage Quantity"
@@ -154,27 +156,31 @@ def merge_data():
     # sum the issued credits for each id
     totals = df.groupby("ID").sum().reset_index()
 
+    # load basic details
+    basic_details = pd.read_csv(PROJECT_FILE)
 
-    # load all verra details
-    # with open("data/verra_details2.json", "r") as infile:
-    details = pd.read_json("data/verra_details2.json")
-    print(details.keys())
+    for index, row in totals.iterrows():
+        # print(row['ID'], row['Quantity Issued'])
+        pid = str(int(row["ID"]))
+        details_fname = f"data/verra/projects/{pid}.json"
+        try:
+            with open(details_fname, "r") as infile:
+                details = json.load(infile)
+        except Exception as e:
+            continue
 
-    details2 = pd.read_csv(PROJECT_FILE)
-    print(details2.keys())
-
-
-
-
-    # for index, row in totals.iterrows():
-    #     # print(row['ID'], row['Quantity Issued'])
-    #     pid = str(int(row["ID"]))
-    #     project = OffsetProject(registry_id=pid, total_credits=row["Quantity Issued"])
-    #     print(project)
-
+        # TODO: finish this up!
+        description = details.get("description", "")
+        status = details.get("status")
+        print(details)
+        project = OffsetProject(
+            registry_id=pid,
+            total_credits=row["Quantity Issued"],
+            description=description,
+        )
+        print(project)
 
     # print(totals)
-
 
 
 def run():
@@ -187,5 +193,5 @@ def run():
 if __name__ == "__main__":
     # download_projects_csv()
     # download_issuances_csv()
-    get_all_project_details()
-    # merge_data()
+    # get_all_project_details()
+    merge_data()
