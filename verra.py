@@ -7,9 +7,9 @@ import requests
 
 from data import OffsetProject
 
-ISSUANCE_FILE = "data/verra_vcus.csv"
-PROJECT_FILE = "data/verra_projects.csv"
-DETAILS_FILE = "data/verra_details.json"
+ISSUANCE_FILE = "data/verra/verra_vcus.csv"
+PROJECT_FILE = "data/verra/verra_projects.csv"
+DETAILS_FILE = "data/verra/verra_details.json"
 FINAL = "data/verra_final.csv"
 
 COOKIES = {
