@@ -10,6 +10,7 @@ from data import OffsetProject
 ISSUANCE_FILE = "data/verra_vcus.csv"
 PROJECT_FILE = "data/verra_projects.csv"
 DETAILS_FILE = "data/verra_details.json"
+FINAL = "data/verra_final.csv"
 
 COOKIES = {
     "ASPSESSIONIDSEBRTARC": "JNIICHMANPKHCBEAAJLDBOMP",
@@ -144,6 +145,8 @@ def merge_data():
     Normalizes and merges data from all sources
     """
 
+    out = []
+
     # load all issuances
     df = pd.read_csv(ISSUANCE_FILE)
 
@@ -159,7 +162,7 @@ def merge_data():
     # load basic details
     basic_details = pd.read_csv(PROJECT_FILE)
 
-    for index, row in totals.iterrows():
+    for index, row in basic_details.iterrows():
         pid = int(row["ID"])
         details_fname = f"data/verra/projects/{pid}.json"
         try:
@@ -172,22 +175,30 @@ def merge_data():
         # TODO: finish this up!
         description = details.get("description", "")
 
-        details_row = basic_details.loc[basic_details["ID"] == pid]
+        total = 0.0
+
+        total_row = totals.loc[totals["ID"] == pid]["Quantity Issued"].values
+        if len(total_row) > 0:
+            total = total_row[0]
 
         project = OffsetProject(
             registry_id=str(pid),
-            total_credits=row["Quantity Issued"],
+            total_credits=total,
             description=description,
-            status=details_row["Status"].values[0],
+            status=row["Status"],
             registry_url=f"https://registry.verra.org/app/projectDetail/VCS/{pid}",
-            developer=basic_details["Proponent"].values[0],
-            project_type=basic_details["Project Type"].values[0],
-            methodology=basic_details["Methodology"].values[0],
-            location=basic_details["Country/Area"].values[0],
-            name=basic_details["Name"].values[0]
+            developer=row["Proponent"],
+            project_type=row["Project Type"],
+            methodology=row["Methodology"],
+            location=row["Country/Area"],
+            name=row["Name"],
+            registry="verra",
         )
 
-    # print(totals)
+        out.append(project.dict())
+
+    out = pd.DataFrame.from_records(out)
+    out.to_csv(FINAL, index=False)
 
 
 def run():

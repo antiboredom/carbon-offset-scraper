@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 @dataclass
 class OffsetProject:
@@ -15,3 +15,7 @@ class OffsetProject:
     methodology: str = ""
     total_credits: float = 0
     status: str = ""
+    registry: str = ""
+
+
+    dict = asdict
