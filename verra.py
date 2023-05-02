@@ -140,7 +140,7 @@ def get_all_project_details(outname=DETAILS_FILE):
         #     json.dump(list(all), outfile)
 
 
-def merge_data():
+def merge():
     """
     Normalizes and merges data from all sources
     """
@@ -199,17 +199,18 @@ def merge_data():
 
     out = pd.DataFrame.from_records(out)
     out.to_csv(FINAL, index=False)
+    return out
 
 
 def run():
     download_projects_csv()
     download_issuances_csv()
     get_all_project_details()
-    merge_data()
+    merge()
 
 
 if __name__ == "__main__":
     # download_projects_csv()
     # download_issuances_csv()
     # get_all_project_details()
-    merge_data()
+    merge()

@@ -165,6 +165,7 @@ def merge():
 
     out = pd.DataFrame.from_records(out)
     out.to_csv(FINAL, index=False)
+    return out
 
 
 def run():

@@ -1,7 +1,10 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
 
+import pandas as pd
 import requests
+
+from data import OffsetProject
 
 PROJECT_FILE = "data/gold_standard/projects.json"
 FINAL = "data/gold_standard.csv"
@@ -94,7 +97,60 @@ def get_details():
         executor.map(get_detail, ids)
 
 
+def merge():
+    out = []
+
+    with open(PROJECT_FILE, "r") as infile:
+        projects = json.load(infile)
+
+    for p in projects:
+        pid = p["id"]
+        with open(f"data/gold_standard/details/{pid}_details.json", "r") as infile:
+            details = json.load(infile)
+        with open(f"data/gold_standard/details/{pid}_summary.json", "r") as infile:
+            summary = json.load(infile)
+
+        total = 0
+        retired = 0
+
+        for item in summary:
+            for i in item["summary"]:
+                if i["status"] == "ISSUED":
+                    total += i["total"]
+                elif i["status"] == "RETIRED":
+                    retired += i["total"]
+
+        project = OffsetProject(
+            registry_id=p["id"],
+            total_credits=total,
+            # retired_credits=retired,
+            description=details["description"],
+            status=p["status"],
+            registry_url=f"https://registry.goldstandard.org/projects/details/{pid}",
+            developer=p["project_developer"],
+            project_type=p["type"],
+            methodology=p["methodology"],
+            location=p["country"],
+            name=p["name"],
+            registry="gold_standard",
+        )
+
+        out.append(project.dict())
+
+    out = pd.DataFrame.from_records(out)
+    out.to_csv(FINAL, index=False)
+    return out
+
+
+def run():
+    get_list()
+    get_details()
+    get_summaries()
+    merge()
+
+
 if __name__ == "__main__":
     # get_list()
     # get_details()
-    get_summaries()
+    # get_summaries()
+    merge()

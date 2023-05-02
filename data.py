@@ -14,6 +14,7 @@ class OffsetProject:
     description: str = ""
     methodology: str = ""
     total_credits: float = 0
+    # retired_credits: float = 0
     status: str = ""
     registry: str = ""
 
