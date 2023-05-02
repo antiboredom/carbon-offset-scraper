@@ -138,7 +138,7 @@ def merge():
     out = []
 
     for p in projects:
-        total = re.sub(f"\D", "", p["Total Number of Credits Registered"])
+        total = re.sub(r"\D", "", p["Total Number of Credits Registered"])
         if total == "":
             total = 0.0
         else:
