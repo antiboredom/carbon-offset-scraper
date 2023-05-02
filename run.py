@@ -16,6 +16,7 @@ def merge_and_save():
 
     out = pd.concat(out)
     out.to_csv(FINAL, index=False)
+    # out.to_json("data/offset.json", orient="records")
 
 
 def run_all():
