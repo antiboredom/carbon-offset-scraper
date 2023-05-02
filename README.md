@@ -44,7 +44,7 @@ python run.py
 
 ```
 
-This will output a file called `offsets.csv` in the `data` folder.
+This will output two files in the `data` folder: `offsets.csv`, and `offset.json`.
 
 
 You can also run the scrapers individually. For example, to just download Verra data:
