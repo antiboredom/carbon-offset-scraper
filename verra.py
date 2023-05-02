@@ -210,7 +210,4 @@ def run():
 
 
 if __name__ == "__main__":
-    # download_projects_csv()
-    # download_issuances_csv()
-    # get_all_project_details()
-    merge()
+    run()

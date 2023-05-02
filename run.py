@@ -26,4 +26,4 @@ def run_all():
 
 
 if __name__ == "__main__":
-    merge_and_save()
+    run_all()

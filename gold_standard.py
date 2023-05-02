@@ -150,7 +150,4 @@ def run():
 
 
 if __name__ == "__main__":
-    # get_list()
-    # get_details()
-    # get_summaries()
-    merge()
+    run()

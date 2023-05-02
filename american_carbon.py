@@ -175,6 +175,4 @@ def run():
 
 
 if __name__ == "__main__":
-    # get_all()
-    # get_project_descriptions()
-    merge()
+    run()
