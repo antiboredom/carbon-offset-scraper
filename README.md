@@ -55,4 +55,4 @@ python verra.py
 
 ## Alternatives
 
-The [Berkeley Carbon Trading Project](https://gspp.berkeley.edu/research-and-impact/centers/cepp/projects/berkeley-carbon-trading-project/offsets-database) allows you to download a database with more complete historical data.
+The [Berkeley Carbon Trading Project](https://gspp.berkeley.edu/research-and-impact/centers/cepp/projects/berkeley-carbon-trading-project/offsets-database) allows you to download a database with more complete historical data, but seems to lack project descriptions.
