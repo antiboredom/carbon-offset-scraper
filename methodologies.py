@@ -30,7 +30,7 @@ def run():
         methods = s.select("p a")
         for m in methods:
             url = m.attrs.get("href", "")
-            if not url.startswith("https://verra.org"):
+            if not url.startswith("http"):
                 url = "https://verra.org" + url
             t = m.text.strip()
             version = None
