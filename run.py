@@ -3,6 +3,7 @@ import pandas as pd
 import american_carbon
 import gold_standard
 import verra
+import methodologies
 
 providers = [verra, gold_standard, american_carbon]
 
@@ -24,6 +25,8 @@ def run_all():
         p.run()
 
     merge_and_save()
+
+    methodologies.run()
 
 
 if __name__ == "__main__":
