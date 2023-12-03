@@ -8,9 +8,12 @@ FINAL = "data/verra_methodologies.json"
 
 
 def get_description(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
-    desc = soup.select_one(".methodologies-detail").text.strip()
+    try:
+        r = requests.get(url)
+        soup = BeautifulSoup(r.text, "html.parser")
+        desc = soup.select_one(".methodologies-detail").text.strip()
+    except Exception as e:
+        desc = ""
     return desc
 
 
